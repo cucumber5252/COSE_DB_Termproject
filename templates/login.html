@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Login</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+        <style>
+            .alert {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <br />
+            <h1>DB Term Project: Movie Reviews</h1>
+            <form action="/register" method="post">
+                <label for="user_id">ID:</label><br />
+                <input id="user_id" type="text" name="id" /><br />
+
+                <label for="user_pwd">PASSWORD:</label><br />
+                <input id="user_pwd" type="password" name="password" /><br /><br />
+
+                <input type="submit" name="send" value="sign in" class="btn btn-primary" />
+                <input type="submit" name="send" value="sign up" class="btn btn-primary" />
+            </form>
+
+            <br />
+            <div class="alert">{{ message }}</div>
+        </div>
+    </body>
+</html>

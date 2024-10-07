@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>User Information</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            th,
+            td {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            .button_list {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                width: 11%;
+            }
+            .user_btn {
+                background-color: #ff757f;
+            }
+
+            .movie_btn {
+                background-color: #00ee7a;
+            }
+
+            .user_btn_text,
+            .movie_btn_text {
+                text-decoration: none;
+                color: black;
+            }
+            .id_btn {
+                padding: 6px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div>
+                ID:
+                <span class="user_btn id_btn">
+                    <a href="{{ url_for('user_info', user_id=current_user_id) }}" class="user_btn_text"
+                        >{{current_user_id}}</a
+                    >
+                </span>
+            </div>
+            <br />
+            <a href="{{ url_for('main')}}" class="btn btn-primary">Main Page</a>
+            <br />
+            <br />
+            <h1>{{ user_id }}</h1>
+
+            <div class="button_list">
+                {% if current_user_id != user_id and user_id != 'admin' %}
+                <form action="/follow/{{ user_id }}" method="POST">
+                    <input type="submit" value="Follow" />
+                </form>
+
+                <form action="/mute/{{ user_id }}" method="POST">
+                    <input type="submit" value="Mute" />
+                </form>
+                {% endif %}
+            </div>
+            <br />
+            <h2>[Interests]</h2>
+            <table>
+                <tr>
+                    <th>Movie</th>
+                </tr>
+                {% for interest in interests %}
+                <tr>
+                    <td class="movie_btn">
+                        <a href="{{ url_for('movie_info', movie_id=interest[0]) }}" class="movie_btn_text"
+                            >{{ interest[1] }}</a
+                        >
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <br />
+
+            <h2>[Reviews]</h2>
+            <table>
+                <tr>
+                    <th>Rating</th>
+                    <th>Movie</th>
+                    <th>Review</th>
+                    <th>Time</th>
+                </tr>
+                {% for review in reviews %}
+                <tr>
+                    <td>{{ review[0] }}</td>
+                    <td class="movie_btn">
+                        <a href="{{ url_for('movie_info', movie_id=review[1])}}" class="movie_btn_text"
+                            >{{ review[2]}}</a
+                        >
+                    </td>
+                    <td>{{ review[3] }}</td>
+                    <td>{{ review[4].strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <br />
+            <h2>[Followers]</h2>
+            <table>
+                <tr>
+                    <th>User</th>
+                </tr>
+                {% for user in followers %}
+                <tr>
+                    <td class="user_btn">
+                        <a href="{{ url_for('user_info', user_id=user[0])}}" class="user_btn_text">{{ user[0]}}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% if current_user_id == user_id %}
+            <br />
+            <h2>[Followed]</h2>
+            <table>
+                <tr>
+                    <th>User</th>
+                    <th>Unfollow</th>
+                </tr>
+                {% for user in followed %}
+                <tr>
+                    <td class="user_btn">
+                        <a href="{{ url_for('user_info', user_id=user[0])}}" class="user_btn_text">{{ user[0]}}</a>
+                    </td>
+                    <td>
+                        <form action="/unfollow/{{ user[0] }}" method="POST">
+                            <input type="submit" value="Unfollow" />
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <br />
+            <h2>[Muted]</h2>
+            <table>
+                <tr>
+                    <th>User</th>
+                    <th>Unmute</th>
+                </tr>
+                {% for user in muted %}
+                <tr>
+                    <td class="user_btn">
+                        <a href="{{ url_for('user_info', user_id=user[0])}}" class="user_btn_text">{{ user[0]}}</a>
+                    </td>
+                    <td>
+                        <form action="/unmute/{{ user[0] }}" method="POST">
+                            <input type="submit" value="Unmute" />
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            <br />
+            {% if user_id == 'admin' and current_user_id == 'admin' %}
+            <h2>Add Movie</h2>
+            <form action="{{ url_for('add_movie') }}" method="post">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required /><br /><br />
+
+                <label for="director">Director:</label>
+                <input type="text" id="director" name="director" required /><br /><br />
+
+                <label for="genre">Genre:</label>
+                <select id="genre" name="genre">
+                    <option value="action">Action</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="drama">Drama</option>
+                    <option value="fantasy">Fantasy</option>
+                    <option value="horror">Horror</option>
+                    <option value="mystery">Mystery</option>
+                    <option value="romance">Romance</option>
+                    <option value="thriller">Thriller</option>
+                    <option value="western">Western</option></select
+                ><br /><br />
+
+                <label for="rel_date">Release Date:</label>
+                <input type="date" id="rel_date" name="rel_date" required /><br /><br />
+
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </form>
+            {% endif %}
+        </div>
+    </body>
+</html>

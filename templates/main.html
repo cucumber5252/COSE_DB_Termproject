@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Main Page</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                margin-bottom: 40px;
+            }
+            th,
+            td {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            .user_btn,
+            .movie_btn {
+                background-color: #ff757f;
+            }
+            .movie_btn {
+                background-color: #00ee7a;
+            }
+            .user_btn_text,
+            .movie_btn_text {
+                text-decoration: none;
+                color: black;
+            }
+            .header-buttons {
+                margin-bottom: 20px;
+            }
+            .id_btn {
+                padding: 6px;
+            }
+            .btn-interest {
+                width: 90px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div>
+                ID:
+                <span class="user_btn id_btn">
+                    <a href="{{ url_for('user_info', user_id=user_id) }}" class="user_btn_text">{{user_id}}</a>
+                </span>
+            </div>
+            <br />
+            <div class="header-buttons">
+                <a href="{{ url_for('main', movie_sort='latest', review_sort=review_sort) }}"
+                    ><button class="btn btn-primary">Latest</button></a
+                >
+                <a href="{{ url_for('main', movie_sort='genre', review_sort=review_sort) }}"
+                    ><button class="btn btn-primary">Genre</button></a
+                >
+                <a href="{{ url_for('main', movie_sort='ranking', review_sort=review_sort) }}"
+                    ><button class="btn btn-primary">Ratings</button></a
+                >
+                <a href="{{ url_for('main', movie_sort='hottest', review_sort=review_sort) }}"
+                    ><button class="btn btn-primary">Hottest</button></a
+                >
+            </div>
+
+            <h1>Movies List</h1>
+            <table>
+                <tr>
+                    <th>Title</th>
+                    <th>Ratings</th>
+                    <th>Director</th>
+                    <th>Genre</th>
+                    <th>Release Date</th>
+                    <th>Click</th>
+                    <th>Interest</th>
+                </tr>
+                {% for movie in movies %}
+                <tr>
+                    <td class="movie_btn">
+                        <a href="{{ url_for('movie_info', movie_id=movie[0])}}" class="movie_btn_text"
+                            >{{ movie[1] }}</a
+                        >
+                    </td>
+                    <td>{{ '%.1f' % movie[5] if movie[5] else 'None' }}</td>
+                    <td>{{ movie[2] }}</td>
+                    <td>{{ movie[3] }}</td>
+                    <td>{{ movie[4] }}</td>
+                    <td>{{ movie[6] }}</td>
+                    <td>
+                        <form action="{{ url_for('toggle_interest', movie_id=movie[0]) }}" method="post">
+                            <button type="submit" class="btn btn-primary btn-interest">
+                                {{ 'Remove' if movie[0] in interest_list else 'Add' }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <br />
+
+            <div class="header-buttons">
+                <a href="{{ url_for('main', movie_sort=movie_sort, review_sort='latest') }}"
+                    ><button class="btn btn-primary">Latest</button></a
+                >
+                <a href="{{ url_for('main', movie_sort=movie_sort, review_sort='title') }}"
+                    ><button class="btn btn-primary">Title</button></a
+                >
+                <a href="{{ url_for('main', movie_sort=movie_sort, review_sort='followers') }}"
+                    ><button class="btn btn-primary">Followers</button></a
+                >
+            </div>
+
+            <h1>Reviews List</h1>
+            <table>
+                <tr>
+                    <th>Ratings</th>
+                    <th>User</th>
+                    <th>Title</th>
+                    <th>Review</th>
+                    <th>Time</th>
+                </tr>
+                {% for review in reviews %}
+                <tr>
+                    <td>{{ review[0] }}</td>
+                    <td class="user_btn">
+                        <a href="{{ url_for('user_info', user_id=review[1])}}" class="user_btn_text">{{ review[1] }}</a>
+                    </td>
+                    <td class="movie_btn">
+                        <a href="{{ url_for('movie_info', movie_id=review[5])}}" class="movie_btn_text"
+                            >{{ review[2] }}</a
+                        >
+                    </td>
+                    <td>{{ review[3] }}</td>
+                    <td>{{ review[4].strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </body>
+</html>
